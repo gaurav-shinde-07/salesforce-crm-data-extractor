@@ -115,70 +115,70 @@ All extracted data is stored in `chrome.storage.local` under the `salesforce_dat
   "salesforce_data": {
     "leads": [
       {
-        "id": "00Qfj000008vji9EAA",
-        "name": "John Doe",
-        "company": "Acme Corporation",
-        "email": "john@acme.com",
-        "phone": "555-1234",
-        "status": "Open",
-        "leadSource": "Web",
-        "owner": "Jane Smith"
+        "id": "00Qfj000009AbCDEAA",
+        "name": "Rohan Mehta",
+        "company": "Nimbus Analytics Pvt Ltd",
+        "email": "rohan.mehta@nimbusanalytics.com",
+        "phone": "+91-9876543210",
+        "status": "Working",
+        "leadSource": "LinkedIn",
+        "owner": "Ananya Kapoor"
       }
     ],
     "contacts": [
       {
-        "id": "003fj00000awVptAAE",
-        "name": "Jane Smith",
-        "email": "jane@example.com",
-        "phone": "555-5678",
-        "accountName": "Example Inc",
-        "title": "Manager",
-        "contactOwner": "John Doe",
-        "mailingAddress": "123 Main St"
+        "id": "003fj00000LmNOPAA",
+        "name": "Priya Sharma",
+        "email": "priya.sharma@brightware.io",
+        "phone": "+91-9123456789",
+        "accountName": "BrightWare Solutions",
+        "title": "Product Lead",
+        "contactOwner": "Amit Verma",
+        "mailingAddress": "402, Sunrise Towers, Pune, MH"
       }
     ],
     "accounts": [
       {
-        "id": "001fj00000XYZAAA",
-        "accountName": "Global Tech Solutions",
-        "website": "www.globaltech.com",
-        "phone": "555-0000",
-        "industry": "Technology",
-        "type": "Customer",
-        "accountOwner": "Sales Rep Name",
-        "annualRevenue": "5000000"
+        "id": "001fj00000ACCTAAA",
+        "accountName": "BrightWare Solutions",
+        "website": "https://www.brightware.io",
+        "phone": "+91-2045678901",
+        "industry": "Software Services",
+        "type": "Prospect",
+        "accountOwner": "Neha Kulkarni",
+        "annualRevenue": "12000000"
       }
     ],
     "opportunities": [
       {
-        "id": "006fj00000OpnameAAB",
-        "opportunityName": "Enterprise License Deal",
-        "stage": "Proposal",
-        "amount": "250000",
-        "probability": "75",
-        "closeDate": "2025-03-31",
-        "forecastCategory": "Pipeline",
-        "opportunityOwner": "Sales Rep Name",
-        "associatedAccount": "Global Tech Solutions"
+        "id": "006fj00000OPPXYZAA",
+        "opportunityName": "CRM Implementation Project",
+        "stage": "Negotiation",
+        "amount": "180000",
+        "probability": "65",
+        "closeDate": "2025-04-20",
+        "forecastCategory": "Best Case",
+        "opportunityOwner": "Rahul Deshmukh",
+        "associatedAccount": "BrightWare Solutions"
       }
     ],
     "tasks": [
       {
-        "id": "00Tfj000001TASKAA",
-        "subject": "Follow up with client",
-        "dueDate": "2025-02-15",
-        "status": "Open",
-        "priority": "High",
-        "relatedTo": "Global Tech Solutions",
-        "assignedTo": "John Doe"
+        "id": "00Tfj000002TASKBB",
+        "subject": "Prepare proposal presentation",
+        "dueDate": "2025-02-25",
+        "status": "In Progress",
+        "priority": "Medium",
+        "relatedTo": "CRM Implementation Project",
+        "assignedTo": "Priya Sharma"
       }
     ],
     "lastSync": {
-      "leads": 1705420800000,
-      "contacts": 1705420800000,
-      "accounts": 1705420800000,
-      "opportunities": 1705420800000,
-      "tasks": 1705420800000
+      "leads": 1706208000000,
+      "contacts": 1706208000000,
+      "accounts": 1706208000000,
+      "opportunities": 1706208000000,
+      "tasks": 1706208000000
     }
   }
 }
