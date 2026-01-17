@@ -30,7 +30,7 @@ const App: FC = () => {
 
   useEffect(() => {
     loadData();
-    
+
     const handleStorageChange = (changes: Record<string, any>, areaName: string) => {
       if (areaName === 'local' && changes.salesforce_data) {
         setData(changes.salesforce_data.newValue || {
@@ -45,9 +45,8 @@ const App: FC = () => {
     };
 
     chrome.storage.onChanged.addListener(handleStorageChange);
-    
     const interval = setInterval(loadData, 2000);
-    
+
     return () => {
       chrome.storage.onChanged.removeListener(handleStorageChange);
       clearInterval(interval);
@@ -113,97 +112,105 @@ const App: FC = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl bg-white">
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4">
-        <h1 className="text-lg font-bold">Salesforce CRM Extractor</h1>
-        <p className="text-blue-100 text-sm">Extract and manage CRM data</p>
+    <div className="w-full h-full flex flex-col bg-[#0b0f14] text-gray-200 shadow-xl">
+
+      {/* Header */}
+      <div className="bg-black border-b border-green-500/30 p-4">
+        <h1 className="text-lg font-bold text-green-400">
+          Salesforce CRM Data Extractor
+        </h1>
+        <p className="text-sm text-green-300/80">
+          Extract and manage Salesforce CRM data seamlessly from the browser.
+        </p>
       </div>
 
+      {/* Message */}
       {message && (
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-3 mx-4 mt-4">
-          <p className="text-sm text-blue-700">{message}</p>
+        <div className="mx-4 mt-3 p-3 rounded-md bg-green-900/30 border border-green-500/40">
+          <p className="text-sm text-green-300">{message}</p>
         </div>
       )}
 
-      {activeTab === 'summary' && (
-        <div className="p-6">
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-gray-600 text-sm">Total Records</p>
-              <p className="text-2xl font-bold text-blue-600">{totalRecords}</p>
+      {/* MAIN CONTENT (SCROLLABLE — IMPORTANT) */}
+      <div className="flex-1 overflow-y-auto">
+        {activeTab === 'summary' && (
+          <div className="p-5">
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-[#111827] p-4 rounded-lg border border-gray-700">
+                <p className="text-sm text-gray-400">Total Records</p>
+                <p className="text-2xl font-bold text-green-400">{totalRecords}</p>
+              </div>
+              <div className="bg-[#111827] p-4 rounded-lg border border-gray-700">
+                <p className="text-sm text-gray-400">Last Sync</p>
+                <p className="text-lg font-semibold text-green-300">
+                  {formatTime(Math.max(...Object.values(data.lastSync) as number[]) || 0)}
+                </p>
+              </div>
             </div>
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <p className="text-gray-600 text-sm">Last Sync</p>
-              <p className="text-xl font-bold text-purple-600">
-                {formatTime(Math.max(...Object.values(data.lastSync) as number[]) || 0)}
-              </p>
-            </div>
-          </div>
 
-          <div className="space-y-3 mb-6">
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-semibold text-gray-900">Leads</span>
-              <span className="text-lg font-bold text-gray-600">{data.leads.length}</span>
+            <div className="space-y-2 mb-6">
+              {[
+                ['Leads', data.leads.length],
+                ['Contacts', data.contacts.length],
+                ['Accounts', data.accounts.length],
+                ['Opportunities', data.opportunities.length],
+                ['Tasks', data.tasks.length]
+              ].map(([label, count]) => (
+                <div
+                  key={label}
+                  className="flex justify-between items-center px-4 py-3 bg-[#0f172a] rounded-md border border-gray-700"
+                >
+                  <span className="font-medium">{label}</span>
+                  <span className="text-green-400 font-bold">{count}</span>
+                </div>
+              ))}
             </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-semibold text-gray-900">Contacts</span>
-              <span className="text-lg font-bold text-gray-600">{data.contacts.length}</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-semibold text-gray-900">Accounts</span>
-              <span className="text-lg font-bold text-gray-600">{data.accounts.length}</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-semibold text-gray-900">Opportunities</span>
-              <span className="text-lg font-bold text-gray-600">{data.opportunities.length}</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-semibold text-gray-900">Tasks</span>
-              <span className="text-lg font-bold text-gray-600">{data.tasks.length}</span>
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <button
-              onClick={() => handleSync('current')}
-              disabled={isLoading}
-              className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400 font-medium"
-            >
-              {isLoading ? 'Syncing...' : 'Extract Current Page'}
-            </button>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-3">
               <button
-                onClick={handleExportJSON}
-                className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm font-medium"
+                onClick={() => handleSync('current')}
+                disabled={isLoading}
+                className="w-full py-2 rounded-md bg-green-600 hover:bg-green-700 text-black font-semibold disabled:opacity-50"
               >
-                Export JSON
+                {isLoading ? 'Syncing...' : 'Extract Current Page'}
               </button>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={handleExportJSON}
+                  className="py-2 rounded-md bg-[#1f2937] hover:bg-[#374151] border border-gray-600"
+                >
+                  Export JSON
+                </button>
+                <button
+                  onClick={handleExportCSV}
+                  className="py-2 rounded-md bg-[#1f2937] hover:bg-[#374151] border border-gray-600"
+                >
+                  Export CSV
+                </button>
+              </div>
+
               <button
-                onClick={handleExportCSV}
-                className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm font-medium"
+                onClick={handleClearAll}
+                className="w-full py-2 rounded-md bg-red-600/80 hover:bg-red-700 text-white"
               >
-                Export CSV
+                Clear All Data
               </button>
             </div>
-            <button
-              onClick={handleClearAll}
-              className="w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm font-medium"
-            >
-              Clear All Data
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {activeTab === 'leads' && <LeadsTab data={data.leads} onDelete={handleDelete} onSync={handleSync} />}
-      {activeTab === 'contacts' && <ContactsTab data={data.contacts} onDelete={handleDelete} onSync={handleSync} />}
-      {activeTab === 'accounts' && <AccountsTab data={data.accounts} onDelete={handleDelete} onSync={handleSync} />}
-      {activeTab === 'opportunities' && (
-        <OpportunitiesTab data={data.opportunities} onDelete={handleDelete} onSync={handleSync} />
-      )}
-      {activeTab === 'tasks' && <TasksTab data={data.tasks} onDelete={handleDelete} onSync={handleSync} />}
+        {activeTab === 'leads' && <LeadsTab data={data.leads} onDelete={handleDelete} onSync={handleSync} />}
+        {activeTab === 'contacts' && <ContactsTab data={data.contacts} onDelete={handleDelete} onSync={handleSync} />}
+        {activeTab === 'accounts' && <AccountsTab data={data.accounts} onDelete={handleDelete} onSync={handleSync} />}
+        {activeTab === 'opportunities' && (
+          <OpportunitiesTab data={data.opportunities} onDelete={handleDelete} onSync={handleSync} />
+        )}
+        {activeTab === 'tasks' && <TasksTab data={data.tasks} onDelete={handleDelete} onSync={handleSync} />}
+      </div>
 
-      <div className="border-t border-gray-200 flex overflow-x-auto bg-gray-50">
+      {/* Bottom Tabs */}
+      <div className="border-t border-gray-700 flex bg-[#020617]">
         {[
           { id: 'summary', label: 'Summary', count: totalRecords },
           { id: 'leads', label: 'Leads', count: data.leads.length },
@@ -215,14 +222,14 @@ const App: FC = () => {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-3 px-2 text-center text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+            className={`flex-1 py-3 px-2 text-sm font-medium transition ${
               activeTab === tab.id
-                ? 'border-blue-500 text-blue-600 bg-white'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
+                ? 'text-green-400 border-b-2 border-green-500'
+                : 'text-gray-400 hover:text-gray-200'
             }`}
           >
-            <span>{tab.label}</span>
-            <span className="ml-1 text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
+            {tab.label}
+            <span className="ml-1 text-xs bg-gray-700 px-2 py-0.5 rounded-full">
               {tab.count}
             </span>
           </button>
