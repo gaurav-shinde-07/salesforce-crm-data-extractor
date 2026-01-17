@@ -1,96 +1,124 @@
-Salesforce CRM Data Extractor Chrome Extension
+# Salesforce CRM Data Extractor
 
-Installation
+A powerful Chrome extension for seamlessly extracting and managing Salesforce CRM data directly from your browser. Automatically captures leads, contacts, accounts, opportunities, and tasks with intelligent field detection.
 
-For Developers
+##  Table of Contents
 
-1. Clone the repository:
-   git clone [<repository-url>](https://github.com/gaurav-shinde-07/salesforce-crm-data-extractor)
-   cd salesforce-crm-extractor
+- [Installation](#installation)
+- [Features](#features)
+- [Data Extraction Strategy](#data-extraction-strategy)
+- [Storage Schema](#storage-schema)
+- [Supported Objects](#supported-objects)
+- [Development](#development)
 
-2. Install dependencies:
+##  Installation
+
+### For Users
+
+Install from the [Chrome Web Store](#) (link will be available upon publication)
+
+### For Developers
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/gaurav-shinde-07/salesforce-crm-data-extractor
+   cd salesforce-crm-data-extractor
+   ```
+
+2. **Install dependencies:**
+   ```bash
    npm install
+   ```
 
-3. Build the extension:
+3. **Build the extension:**
+   ```bash
    npm run build
+   ```
 
-4. Load the extension in Chrome:
-   - Open Chrome and navigate to chrome://extensions/
-   - Enable "Developer mode" (toggle in top right)
-   - Click "Load unpacked"
+4. **Load in Chrome:**
+   - Open Chrome and navigate to `chrome://extensions/`
+   - Enable **"Developer mode"** (toggle in top right corner)
+   - Click **"Load unpacked"**
    - Select the project root directory
    - The extension icon will appear in your Chrome toolbar
 
-For Users
+5. **For development with auto-rebuild:**
+   ```bash
+   npm run dev
+   ```
 
-Simply install from the Chrome Web Store (if published).
+##  Features
 
-DOM Extraction Strategy
+- **Automatic Detection**: Identifies Salesforce objects from URL and page content
+- **Intelligent Extraction**: Uses multiple strategies to extract data reliably
+- **Local Storage**: All data stored securely in browser storage
+- **Deduplication**: Automatically prevents duplicate records
+- **Multi-Object Support**: Handles Leads, Contacts, Accounts, Opportunities, and Tasks
 
-Detection
+## 🔍 Data Extraction Strategy
+
+The extension uses a dual-approach extraction method to ensure maximum data capture:
+
+### Detection Method
 
 The extension automatically detects which Salesforce object is being viewed by:
-1. Checking the URL for /lightning/o/[ObjectType]/ patterns
-2. Falling back to document title analysis
-3. Supported objects: Lead, Contact, Account, Opportunity, Task
 
-Extraction Method
+1. **URL Pattern Matching**: Checks for `/lightning/o/[ObjectType]/` patterns
+2. **Fallback Analysis**: Falls back to document title analysis if URL detection fails
+3. **Supported Objects**: Lead, Contact, Account, Opportunity, Task
 
-Primary Extraction: Lightning Data Table
+### Primary Extraction: Lightning Data Table
 
-The extension first attempts to extract data from Salesforce's Lightning data table using:
-- Selector: [role="row"] for table rows
-- Selector: [role="gridcell"] for individual cell values
-- Each row is processed to extract field values from cells in order
+For Lightning list views and data tables:
 
-Fallback Extraction: Link-Based Pattern Matching
+- **Row Selector**: `[role="row"]` - Identifies table rows
+- **Cell Selector**: `[role="gridcell"]` - Extracts individual cell values
+- **Processing**: Each row is systematically scanned for field values in order
 
-If the primary method yields no results (e.g., Kanban view or page layout changes), the extension uses link-based pattern matching:
+**When it works:** List views, Lightning data tables, standard views
 
-1. Scans all hyperlinks in the page
-2. Matches 18-character Salesforce record IDs by type:
-   - Leads: IDs containing "00Q"
-   - Contacts: IDs containing "003"
-   - Accounts: IDs containing "001"
-   - Opportunities: IDs containing "006"
-   - Tasks: IDs containing "00T"
+### Fallback Extraction: Link-Based Pattern Matching
 
-3. Extracts record ID using regex: /\/([a-zA-Z0-9]{18})(?:\/|$|\?)/
-4. Pulls display name from link text
-5. Extracts contextual fields (email, phone, company, status) from surrounding text
+When primary method yields no results (Kanban view, custom layouts):
 
-Context Extraction
+1. **Scans hyperlinks** throughout the page
+2. **Matches 18-character Salesforce IDs** by type:
+   - **Leads**: IDs containing `00Q`
+   - **Contacts**: IDs containing `003`
+   - **Accounts**: IDs containing `001`
+   - **Opportunities**: IDs containing `006`
+   - **Tasks**: IDs containing `00T`
 
-For fields not present in table cells, the extension extracts values from surrounding text using regex patterns:
-- Email: RFC 5322 pattern
-- Phone: US phone number format with optional country code
-- Company: "company:" or "account:" prefixes
-- Status: "status:" prefix or common values (open, closed, converted)
-- Source/Type: Common Salesforce field values
-- Owner: "owner:" or "assigned:" prefixes
+3. **Extracts record ID** using regex: `/([a-zA-Z0-9]{18})(?:\/|$|\?)/`
+4. **Pulls display name** from hyperlink text
+5. **Extracts contextual fields** from surrounding text
 
-Field Coverage by Object
+### Context Extraction
 
-Leads: name, company, email, phone, status, lead source, owner
-Contacts: name, email, phone, account name, title, owner, mailing address
-Accounts: account name, website, phone, industry, type, owner, annual revenue
-Opportunities: opportunity name, amount, stage, probability, close date, forecast category, owner, associated account
-Tasks: subject, due date, status, priority, related to, assigned to
+For fields not visible in tables, the extension analyzes surrounding text:
 
-Storage Schema
+- **Email**: RFC 5322 pattern matching
+- **Phone**: US format with optional country code
+- **Company**: Matches "company:" or "account:" prefixes
+- **Status**: Matches "status:" prefix or common values (open, closed, converted)
+- **Source/Type**: Common Salesforce field values
+- **Owner**: Matches "owner:" or "assigned:" prefixes
 
-Data Structure
+## 📦 Storage Schema
 
-All extracted data is stored in chrome.storage.local under a single key "salesforce_data":
+All extracted data is stored in `chrome.storage.local` under the `salesforce_data` key.
 
+### Data Structure
+
+```json
 {
   "salesforce_data": {
     "leads": [
       {
         "id": "00Qfj000008vji9EAA",
-        "name": "rok",
+        "name": "John Doe",
         "company": "Acme Corporation",
-        "email": "rok@gmail.com",
+        "email": "john@acme.com",
         "phone": "555-1234",
         "status": "Open",
         "leadSource": "Web",
@@ -100,8 +128,8 @@ All extracted data is stored in chrome.storage.local under a single key "salesfo
     "contacts": [
       {
         "id": "003fj00000awVptAAE",
-        "name": " Smith",
-        "email": "smith@example.com",
+        "name": "Jane Smith",
+        "email": "jane@example.com",
         "phone": "555-5678",
         "accountName": "Example Inc",
         "title": "Manager",
@@ -154,9 +182,75 @@ All extracted data is stored in chrome.storage.local under a single key "salesfo
     }
   }
 }
+```
 
-Data Integrity
+### Data Integrity
 
-- Deduplication: Records are identified by their 18-character Salesforce ID. Duplicate extractions update existing records rather than creating duplicates.
-- Validation: Records with only an ID and no other meaningful fields are filtered out (require minimum 2 fields with data).
-- Atomic Updates: The service worker handles all storage operations to prevent race conditions.
+- **Deduplication**: Records identified by 18-character Salesforce ID; duplicates update existing records
+- **Validation**: Records require minimum 2 fields with data (ID alone is filtered out)
+- **Atomic Operations**: Service worker handles all storage operations to prevent race conditions
+
+## 📊 Supported Objects & Fields
+
+### Leads
+- Name, Company, Email, Phone, Status, Lead Source, Owner
+
+### Contacts
+- Name, Email, Phone, Account Name, Title, Owner, Mailing Address
+
+### Accounts
+- Account Name, Website, Phone, Industry, Type, Owner, Annual Revenue
+
+### Opportunities
+- Opportunity Name, Amount, Stage, Probability, Close Date, Forecast Category, Owner, Associated Account
+
+### Tasks
+- Subject, Due Date, Status, Priority, Related To, Assigned To
+
+## 🛠 Development
+
+### Available Scripts
+
+```bash
+npm run build    # Production build
+npm run dev      # Development build with file watching
+npm run start    # Development server with hot reload
+```
+
+### Project Structure
+
+```
+salesforce-crm-data-extractor/
+├── public/                  # Static files
+│   ├── icons/               # Extension icons
+│   └── popup.html           # Popup HTML file
+├── src/                    # Source files
+│   ├── background/          # Background scripts
+│   ├── content/            # Content scripts
+│   ├── options/            # Extension options page
+│   ├── popup/              # Popup components
+│   └── utils/              # Utility functions
+├── .gitignore               # Git ignore file
+├── manifest.json            # Chrome extension manifest
+├── package.json             # NPM package file
+└── README.md                # This README file
+```
+
+### Troubleshooting Common Issues
+
+- **Extension not appearing in Chrome**: Ensure you enabled "Developer mode" and selected the correct project directory.
+- **Data not extracting**: Check if the Salesforce object is supported and visible in the current view.
+- **Contacting Support**: For unresolved issues, contact support@example.com
+
+### Contributing
+
+1. **Fork the repository**
+2. **Create a new branch**: `git checkout -b feature/YourFeature`
+3. **Make your changes**
+4. **Commit your changes**: `git commit -m "Add your message"`
+5. **Push to the branch**: `git push origin feature/YourFeature`
+6. **Open a pull request**
+
+### License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
