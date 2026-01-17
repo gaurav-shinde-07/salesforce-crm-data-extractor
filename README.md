@@ -217,24 +217,6 @@ npm run dev      # Development build with file watching
 npm run start    # Development server with hot reload
 ```
 
-### Project Structure
-
-```
-salesforce-crm-data-extractor/
-├── public/                  # Static files
-│   ├── icons/               # Extension icons
-│   └── popup.html           # Popup HTML file
-├── src/                    # Source files
-│   ├── background/          # Background scripts
-│   ├── content/            # Content scripts
-│   ├── options/            # Extension options page
-│   ├── popup/              # Popup components
-│   └── utils/              # Utility functions
-├── .gitignore               # Git ignore file
-├── manifest.json            # Chrome extension manifest
-├── package.json             # NPM package file
-└── README.md                # This README file
-```
 
 ### Troubleshooting Common Issues
 
