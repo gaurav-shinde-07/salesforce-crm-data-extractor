@@ -222,7 +222,7 @@ npm run start    # Development server with hot reload
 
 - **Extension not appearing in Chrome**: Ensure you enabled "Developer mode" and selected the correct project directory.
 - **Data not extracting**: Check if the Salesforce object is supported and visible in the current view.
-- **Contacting Support**: For unresolved issues, contact support@example.com
+- **Contacting Support**: For unresolved issues, contact gauravmshinde017@gmail.com
 
 ### Contributing
 
@@ -233,6 +233,4 @@ npm run start    # Development server with hot reload
 5. **Push to the branch**: `git push origin feature/YourFeature`
 6. **Open a pull request**
 
-### License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
